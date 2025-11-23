@@ -103,25 +103,50 @@
             transform: scale(1.1);
         }
         
-        /* NAVIGATION BAR */
+        /* NAVIGATION BAR (Modern Style) */
         #breadcrumb {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 6px;
             margin-bottom: 15px;
             font-size: 0.95em;
         }
-        .breadcrumb-link {
+        .breadcrumb-item {
+            padding: 6px 10px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            background-color: #f0f0f0;
             cursor: pointer;
-            color: #3498db;
             text-decoration: none;
-            font-weight: bold;
+            font-weight: normal;
+            color: #333;
+            transition: background-color 0.2s, box-shadow 0.2s;
+            display: inline-flex;
+            align-items: center;
         }
+        .breadcrumb-item:hover {
+            background-color: #e9e9e9;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        .dark-mode .breadcrumb-item {
+            background-color: #34495e;
+            border-color: #5d6d7e;
+            color: #ecf0f1;
+        }
+        .dark-mode .breadcrumb-item:hover {
+            background-color: #4a6984;
+        }
+        .breadcrumb-separator {
+            color: #7f8c8d;
+        }
+        /* Hapus gaya breadcrumb lama */
+        .breadcrumb-link { }
         .breadcrumb-link:hover {
-            text-decoration: underline;
+            text-decoration: none;
         }
         .breadcrumb-link:not(:last-child)::after {
-            content: " > ";
-            color: #7f8c8d;
-            font-weight: normal;
-            margin: 0 5px;
+            content: none;
         }
 
         /* TOP ACTION BUTTONS (ADD PROMPT/FOLDER) */
@@ -129,6 +154,7 @@
             display: flex;
             gap: 10px;
             margin-bottom: 15px;
+            flex-wrap: wrap; /* Untuk tampilan HP */
         }
         .action-btn-top {
             background-color: #3498db;
@@ -145,11 +171,18 @@
         .action-btn-top.secondary {
             background-color: #2ecc71;
         }
+        .action-btn-top.paste-btn {
+            background-color: #f39c12;
+        }
         .action-btn-top:hover {
             opacity: 0.9;
         }
         .action-btn-top:active {
             transform: scale(0.98);
+        }
+        .action-btn-top[disabled] {
+            background-color: #ccc;
+            cursor: not-allowed;
         }
 
         /* LIST ITEM STYLES (FOLDER & PROMPT) */
@@ -165,6 +198,7 @@
             border-left: 6px solid;
             cursor: grab;
             touch-action: manipulation;
+            transition: opacity 0.3s; /* Untuk cut-item */
         }
         .folder-item {
             border-left-color: #f39c12; /* Warna Folder */
@@ -173,19 +207,38 @@
             border-left-color: #3498db; /* Warna Prompt */
             flex-direction: column;
             align-items: flex-start;
-            cursor: default; 
+            cursor: pointer;  /*MODIFIKASI: Jadi pointer untuk menandakan bisa di-klik*/
         }
+        .prompt-item:hover {
+            background-color: #f0f0f0; /* Efek hover ringan */
+        }
+        .dark-mode .prompt-item:hover {
+            background-color: #3c5168;
+        }
+
         .prompt-item[draggable="true"] {
             cursor: grab;
         }
         .prompt-item .actions {
             margin-top: 10px;
             width: 100%;
-            display: flex; 
-            justify-content: flex-end;
+            display: flex;
+            justify-content: flex-start; /* Rata kiri */
+            align-items: center; 
             gap: 8px;
+            flex-wrap: wrap; /* Izinkan tombol turun jika tidak muat */
         }
         
+        /* STATUS PINDAH (MOVE) & DRAG */
+        
+        .folder-item.move-selected, .prompt-item.move-selected {
+            background-color: #e0e0e0; /* Sedikit lebih gelap dari putih untuk seleksi */
+            border-left-color: #9b59b6; /* Warna ungu untuk menandakan siap dipindah */
+        }
+        .dark-mode .folder-item.move-selected, .dark-mode .prompt-item.move-selected {
+            background-color: #4a6984; /* Warna lebih gelap di dark mode untuk seleksi */
+        }
+
         .list-name {
             font-size: 1.15em;
             font-weight: bold;
@@ -205,7 +258,7 @@
             color: #2c3e50;
         }
         .dark-mode .folder-name-clickable {
-             color: #ecf0f1;
+            color: #ecf0f1;
         }
         .prompt-content-preview {
             font-size: 0.9em;
@@ -222,20 +275,23 @@
             display: flex;
             gap: 8px;
         }
-        .action-btn, .copy-button {
-            padding: 10px 15px;
+        .action-btn { 
+            padding: 8px 12px; /* Perkecil padding tombol */
             border: none;
             border-radius: 6px;
             cursor: pointer;
-            font-size: 0.9em;
-            min-width: 60px;
-            flex-grow: 1;
+            font-size: 0.85em; /* Perkecil font tombol */
+            min-width: auto; /* Hapus min-width */
+            flex-grow: 0; /* Jangan membesar secara otomatis */
             transition: background-color 0.2s;
         }
-        .copy-button {
-            background-color: #2ecc71;
+        .version-btn {
+            background-color: #9b59b6; /* Warna ungu untuk Versi Lain */
             color: white;
-            flex-grow: 2;
+        }
+        .cut-btn {
+            background-color: #3498db;
+            color: white;
         }
         .edit-btn {
             background-color: #f39c12;
@@ -245,7 +301,7 @@
             background-color: #e74c3c;
             color: white;
         }
-        .action-btn:hover, .copy-button:hover {
+        .action-btn:hover { /* HAPUS .copy-btn */
             opacity: 0.85;
         }
 
@@ -290,7 +346,7 @@
             border-top: 1px solid #ccc;
         }
         .dark-mode #importExportSection {
-             border-top: 1px solid #5d6d7e;
+            border-top: 1px solid #5d6d7e;
         }
         #importExportSection .btn-group {
             display: flex;
@@ -351,13 +407,16 @@
     </div>
     
     <h1>Prompt Manager ✨</h1>
-    <span id="author-text">by. antonimous</span>
+    <span id="author-text">by. antonimous v1.2</span>
     
     <div id="breadcrumb"></div>
 
     <div id="top-actions">
         <button id="add-folder-btn" class="action-btn-top" data-type="folder">➕ Tambah Folder</button>
         <button id="add-prompt-btn" class="action-btn-top secondary" data-type="prompt">➕ Tambah Prompt</button>
+        <button id="paste-btn" class="action-btn-top paste-btn" disabled onclick="pasteItem()">📋 Tempel Item</button>
+        <button id="paste-as-new-btn" class="action-btn-top paste-btn" style="display: none;" onclick="pasteContentAsNewPrompt()">📋 Tempel Konten</button>
+        <button id="cancel-cut-btn" class="action-btn-top" style="display: none; background-color: #e74c3c;" onclick="cancelCutOperation()">❌ Batal</button>
     </div>
 
     <div id="prompt-list-container">
@@ -495,7 +554,7 @@
                 const textarea = document.createElement('textarea');
                 textarea.value = text;
                 document.body.appendChild(textarea);
-                textarea.select();
+textarea.select();
                 try {
                     document.execCommand('copy');
                     showNotification('Prompt berhasil disalin (fallback)!', '#2ecc71');
@@ -526,6 +585,12 @@
         let editingItemType = null;
         const storageKey = 'stablePromptFolderData'; 
 
+        // --- CUT & PASTE & VERSIONING GLOBAL STATE ---
+        let isMultiSelectMode = false;
+        let cutItemsData = []; // Array of { id: number, path: array, item: object, name: string }
+        let copiedPromptContent = null; // Untuk fitur salin-tempel konten
+        let versioningSourceId = null; // MODIFIKASI: Untuk melacak prompt asli saat membuat versi baru
+
         const listContainer = document.getElementById('prompt-list-container');
         const breadcrumbElement = document.getElementById('breadcrumb');
         const itemModal = document.getElementById('itemModal');
@@ -534,6 +599,38 @@
         const itemContentTextarea = document.getElementById('itemContent');
         const promptContentGroup = document.getElementById('promptContentGroup');
         const addPromptBtn = document.getElementById('add-prompt-btn');
+        const pasteBtn = document.getElementById('paste-btn');
+
+        // --- CONTENT PASTE & VERSIONING FUNCTIONS ---
+        function hidePasteContentButton() {
+            const pasteContentBtn = document.getElementById('paste-as-new-btn');
+            if(pasteContentBtn) pasteContentBtn.style.display = 'none';
+            copiedPromptContent = null;
+        }
+
+        function pasteContentAsNewPrompt() {
+            if (copiedPromptContent) {
+                openModal(null, 'prompt');
+                itemContentTextarea.value = copiedPromptContent;
+                hidePasteContentButton();
+            } else {
+                showNotification('Tidak ada konten untuk ditempel.', '#e74c3c');
+            }
+        }
+        
+        // MODIFIKASI BARU: Fungsi untuk menaikkan versi nama
+        function incrementVersionName(name) {
+            const versionRegex = / v(\d+)$/;
+            const match = name.match(versionRegex);
+
+            if (match) {
+                const currentVersion = parseInt(match[1], 10);
+                const newVersion = currentVersion + 1;
+                return name.replace(versionRegex, ` v${newVersion}`);
+            } else {
+                return `${name} v1`;
+            }
+        }
 
         // Fungsi navigasi dan CRUD
         function findListByPath(path = currentPath) {
@@ -555,8 +652,22 @@
             return list.find(item => item.id === itemId);
         }
 
+        function getItemLocation(id, list = rootData, currentPath = []) {
+            for (let i = 0; i < list.length; i++) {
+                const item = list[i];
+                const newPath = [...currentPath, item.id];
+                if (item.id === id) {
+                    return { list, index: i, path: newPath, item };
+                }
+                if (item.type === 'folder' && item.items) {
+                    const result = getItemLocation(id, item.items, newPath);
+                    if (result) return result;
+                }
+            }
+            return null;
+        }
+
         function getPromptContentById(id) {
-            // Traverse the tree to find the prompt content
             function recursiveFind(list) {
                 for (const item of list) {
                     if (item.id === id && item.type === 'prompt') {
@@ -570,6 +681,12 @@
                 return null;
             }
             return recursiveFind(rootData);
+        }
+
+        function updateHistory(path) {
+            const pathString = JSON.stringify(path);
+            const hash = path.length > 0 ? `#path=${encodeURIComponent(pathString)}` : '';
+            history.pushState({ path: path }, '', hash);
         }
 
         function loadData() {
@@ -588,9 +705,11 @@
                 console.error("Local Storage Error:", e);
                 rootData = initialData;
             }
+            
             loadTheme();
             loadDpiScale();
             renderView();
+            updateHistory(currentPath);
         }
 
         function saveData() {
@@ -604,42 +723,81 @@
 
         function renderView() {
             listContainer.innerHTML = '';
-            
             const currentList = findListByPath();
-            
             renderBreadcrumb();
 
-            // Hanya tampilkan tombol 'Tambah Prompt' jika berada di dalam folder (currentPath > 0)
-            document.getElementById('add-prompt-btn').style.display = (currentPath.length > 0) ? 'flex' : 'none'; 
+            const cancelCutBtn = document.getElementById('cancel-cut-btn');
 
+            if (isMultiSelectMode) {
+                document.getElementById('add-folder-btn').style.display = 'none';
+                document.getElementById('add-prompt-btn').style.display = 'none';
+                cancelCutBtn.style.display = 'flex';
+                pasteBtn.style.display = 'flex';
+
+                const hasSelection = cutItemsData.length > 0;
+                pasteBtn.disabled = !hasSelection;
+                pasteBtn.textContent = hasSelection ? `📋 Tempel Item (${cutItemsData.length})` : '📋 Tempel Item';
+                pasteBtn.title = hasSelection ? `Tempel ${cutItemsData.length} item di sini.` : 'Pilih item untuk ditempel.';
+            } else {
+                document.getElementById('add-folder-btn').style.display = 'flex';
+                document.getElementById('add-prompt-btn').style.display = (currentPath.length > 0) ? 'flex' : 'none'; 
+                cancelCutBtn.style.display = 'none';
+                pasteBtn.style.display = 'none';
+                pasteBtn.textContent = '📋 Tempel Item';
+            }
+            
             if (currentList.length === 0) {
                  listContainer.innerHTML = '<p style="text-align: center; color: #7f8c8d; padding: 20px;">Folder ini masih kosong. Silakan tambahkan item baru.</p>';
             }
 
             currentList.forEach(item => {
                 const element = document.createElement('div');
+                const isSelected = cutItemsData.some(cutItem => cutItem.id === item.id);
+
                 element.setAttribute('data-id', item.id);
                 element.setAttribute('data-type', item.type);
-                element.setAttribute('draggable', true);
-                
+                element.setAttribute('draggable', !isMultiSelectMode); 
+
+                let classNames = [];
                 if (item.type === 'folder') {
-                    element.className = 'folder-item';
+                    classNames.push('folder-item');
+                } else {
+                    classNames.push('prompt-item');
+                }
+                if (isSelected) {
+                    classNames.push('move-selected');
+                }
+                element.className = classNames.join(' ');
+
+                const checkboxHTML = isMultiSelectMode 
+                    ? `<input type="checkbox" class="item-checkbox" onchange="toggleItemSelection(${item.id}, this.checked)" ${isSelected ? 'checked' : ''} style="margin-right: 15px; transform: scale(1.5); cursor: pointer;">` 
+                    : '';
+
+                if (item.type === 'folder') {
                     element.innerHTML = `
-                        <div class="folder-name-clickable" data-id="${item.id}">
+                        ${checkboxHTML}
+                        <div class="folder-name-clickable" data-id="${item.id}" style="flex-grow: 1;">
                             <span style="margin-right: 10px;">&#x1F4C1;</span> ${item.name}
                         </div>
-                        <div class="actions">
+                        <div class="actions" style="display: ${isMultiSelectMode ? 'none' : 'flex'};">
+                            <button class="action-btn cut-btn" data-id="${item.id}">Potong</button>
                             <button class="action-btn edit-btn" data-id="${item.id}" data-type="folder">Edit</button>
                             <button class="action-btn delete-btn" data-id="${item.id}">Hapus</button>
                         </div>
                     `;
                 } else if (item.type === 'prompt') {
-                    element.className = 'prompt-item';
+                    // MODIFIKASI: Hapus Dropdown, Tampilkan semua tombol
                     element.innerHTML = `
-                        <div class="list-name">${item.name}</div>
-                        <div class="prompt-content-preview">${item.content.replace(/\n/g, ' ')}</div>
-                        <div class="actions">
-                            <button class="copy-button" data-id="${item.id}">Salin</button>
+                        <div style="display: flex; align-items: center; width: 100%;">
+                             ${checkboxHTML}
+                            <div style="flex-grow: 1; overflow: hidden;">
+                                <div class="list-name">${item.name}</div>
+                                <div class="prompt-content-preview">${item.content.replace(/\n/g, ' ')}</div>
+                            </div>
+                        </div>
+                        <div class="actions" style="display: ${isMultiSelectMode ? 'none' : 'flex'};">
+                            <button class="action-btn version-btn" data-id="${item.id}">Versi Lain</button>
+                            <button class="action-btn cut-btn" data-id="${item.id}">Potong</button>
                             <button class="action-btn edit-btn" data-id="${item.id}" data-type="prompt">Edit</button>
                             <button class="action-btn delete-btn" data-id="${item.id}">Hapus</button>
                         </div>
@@ -651,42 +809,65 @@
         }
         
         function renderBreadcrumb() {
-            let html = `<span class="breadcrumb-link" onclick="goToPath([])">🏠 Beranda</span>`;
-            
+            breadcrumbElement.innerHTML = ''; // Hapus breadcrumb yang ada
+
+            // Buat tombol Beranda
+            const homeBtn = document.createElement('span');
+            homeBtn.className = 'breadcrumb-item';
+            homeBtn.innerHTML = '🏠 Beranda';
+            homeBtn.onclick = () => goToPath([]);
+            breadcrumbElement.appendChild(homeBtn);
+
             let accumulatedPath = [];
             currentPath.forEach(id => {
                 accumulatedPath.push(id);
-                const pathCopy = JSON.parse(JSON.stringify(accumulatedPath)); 
                 const item = findItemByPath(accumulatedPath);
+
                 if (item) {
-                    html += `<span class="breadcrumb-link" onclick="goToPath(${JSON.stringify(pathCopy)})">${item.name}</span>`;
+                    // Tambah pemisah
+                    const separator = document.createElement('span');
+                    separator.className = 'breadcrumb-separator';
+                    separator.innerHTML = '&gt;';
+                    breadcrumbElement.appendChild(separator);
+
+                    // Buat tombol folder
+                    const pathCopy = JSON.parse(JSON.stringify(accumulatedPath));
+                    const folderBtn = document.createElement('span');
+                    folderBtn.className = 'breadcrumb-item';
+                    // Ambil nama tanpa ikon folder jika ada, karena kita akan menambahkannya secara manual
+                    const itemName = item.name.replace(/📁\s*/, '');
+                    folderBtn.innerHTML = `📁 ${itemName}`;
+                    folderBtn.onclick = () => goToPath(pathCopy);
+                    breadcrumbElement.appendChild(folderBtn);
                 }
             });
-            breadcrumbElement.innerHTML = html;
         }
-
-        // --- NAVIGATION & EVENT HANDLING ---
 
         function enterFolder(id) {
             currentPath.push(id);
+            hidePasteContentButton();
             renderView();
+            updateHistory(currentPath);
         }
 
         function goToPath(path) {
             currentPath = path;
+            hidePasteContentButton();
             renderView();
+            updateHistory(path);
         }
-
+        
         function addEventListeners() {
-            // Gunakan event delegation
             listContainer.removeEventListener('click', handleListClicks);
             document.getElementById('top-actions').removeEventListener('click', handleTopActions);
             
             listContainer.addEventListener('click', handleListClicks);
             document.getElementById('top-actions').addEventListener('click', handleTopActions);
-
+            
             addDragDropListeners();
         }
+
+        // HAPUS FUNGSI DROPDOWN (closeAllDropdowns, handleMenuToggle)
 
         function handleListClicks(e) {
             const target = e.target;
@@ -695,16 +876,44 @@
 
             const itemId = parseInt(itemElement.getAttribute('data-id'));
             const itemType = itemElement.getAttribute('data-type');
-            
+
             if (target.closest('.folder-name-clickable')) {
                 enterFolder(itemId);
-            } 
-            else if (target.closest('.edit-btn')) {
+                return;
+            }
+
+            if (isMultiSelectMode) {
+                if (target.closest('a, button') && !target.classList.contains('item-checkbox')) return;
+
+                const checkbox = itemElement.querySelector('.item-checkbox');
+                if (checkbox) {
+                    if (!target.classList.contains('item-checkbox')) {
+                        checkbox.checked = !checkbox.checked;
+                        toggleItemSelection(itemId, checkbox.checked);
+                    }
+                }
+                return;
+            }
+
+            // MODIFIKASI: Logika klik tombol langsung, tanpa dropdown
+            if (target.closest('.version-btn')) {
+                const location = getItemLocation(itemId);
+                if (location) {
+                    versioningSourceId = itemId;
+                    const newName = incrementVersionName(location.item.name);
+                    openModal(null, 'prompt');
+                    itemNameInput.value = newName;
+                    itemContentTextarea.value = location.item.content;
+                }
+            } else if (target.closest('.edit-btn')) {
                 openModal(itemId, itemType);
             } else if (target.closest('.delete-btn')) {
                 deleteItem(itemId);
-            } else if (target.closest('.copy-button')) {
-                const content = getPromptContentById(itemId); 
+            } else if (target.closest('.cut-btn')) {
+                cutItem(itemId);
+            } else if (itemType === 'prompt' && !target.closest('button')) {
+                // Klik singkat pada item untuk menyalin
+                const content = getPromptContentById(itemId);
                 if (content) {
                     copyToClipboard(content);
                 } else {
@@ -716,138 +925,427 @@
         function handleTopActions(e) {
             const target = e.target.closest('.action-btn-top');
             if (!target) return;
-            const type = target.getAttribute('data-type');
 
-            if (type === 'prompt' && currentPath.length === 0) {
-                alert("⚠️ Prompt hanya dapat ditambahkan di dalam Folder. Silakan buat/masuk ke folder terlebih dahulu.");
-                return;
+            if (target.id === 'add-folder-btn') {
+                openModal(null, 'folder');
+            } else if (target.id === 'add-prompt-btn') {
+                openModal(null, 'prompt');
             }
-            openModal(null, type);
         }
-
-        // --- MODAL & CRUD ---
-
-        function openModal(id = null, type) {
-            const modal = document.getElementById('itemModal');
-            
+        
+        function openModal(id, type) {
             editingItemId = id;
             editingItemType = type;
-            
-            modalTitle.textContent = (id ? 'Edit ' : 'Tambah ') + (type === 'folder' ? 'Folder' : 'Prompt');
-            
-            promptContentGroup.style.display = (type === 'prompt') ? 'block' : 'none';
-            // Item content wajib diisi jika tipe prompt
-            itemContentTextarea.required = (type === 'prompt'); 
-            
-            const currentList = findListByPath();
-            
-            if (id) {
-                const item = currentList.find(p => p.id === id);
-                if (!item) {
-                    alert("❗ Eror: Item yang akan diedit tidak ditemukan.");
-                    return;
-                }
-                itemNameInput.value = item.name;
-                itemContentTextarea.value = item.content || '';
-            } else {
+            // Hanya reset jika BUKAN operasi 'Versi Lain'
+            if (versioningSourceId === null) {
                 itemNameInput.value = '';
                 itemContentTextarea.value = '';
             }
-            modal.style.display = 'block';
-            // Fokus ke input nama item saat modal dibuka
-            setTimeout(() => itemNameInput.focus(), 100); 
+
+            if (type === 'folder') {
+                modalTitle.textContent = id ? 'Edit Folder' : 'Tambah Folder Baru';
+                promptContentGroup.style.display = 'none';
+            } else { 
+                modalTitle.textContent = id ? 'Edit Prompt' : 'Tambah Prompt Baru';
+                promptContentGroup.style.display = 'block';
+            }
+
+            if (id !== null) {
+                const location = getItemLocation(id);
+                if (location) {
+                    itemNameInput.value = location.item.name;
+                    if (type === 'prompt') {
+                        itemContentTextarea.value = location.item.content;
+                    }
+                }
+            }
+
+            itemModal.style.display = 'block';
+            itemNameInput.focus();
         }
 
         function closeModal(modalId) {
             document.getElementById(modalId).style.display = 'none';
+            // MODIFIKASI: Reset status versi lain saat modal ditutup
+            if (modalId === 'itemModal') {
+                hidePasteContentButton();
+                versioningSourceId = null; 
+            }
         }
 
         function saveItem() {
             const name = itemNameInput.value.trim();
             const content = itemContentTextarea.value.trim();
+            const currentList = findListByPath();
 
-            if (!name || (editingItemType === 'prompt' && !content)) {
-                alert("⚠️ Nama dan Isi Prompt tidak boleh kosong!");
+            if (!name) {
+                alert('Nama item tidak boleh kosong.');
                 return;
             }
-
-            const currentList = findListByPath();
             
+            const isDuplicate = currentList.some(item => 
+                item.name === name && item.id !== editingItemId
+            );
+
+            if (isDuplicate) {
+                 alert(`Nama "${name}" sudah ada di folder ini. Harap gunakan nama lain.`);
+                 return;
+            }
+
             if (editingItemId) {
-                const index = currentList.findIndex(p => p.id === editingItemId);
-                if (index > -1) {
-                    currentList[index].name = name;
+                const location = getItemLocation(editingItemId);
+                if (location) {
+                    location.item.name = name;
                     if (editingItemType === 'prompt') {
-                        currentList[index].content = content;
+                        location.item.content = content;
                     }
-                    showNotification('Item berhasil diubah!', '#f39c12');
+                    showNotification(`${editingItemType === 'folder' ? 'Folder' : 'Prompt'} berhasil diubah!`, '#f39c12');
                 }
             } else {
-                const newId = Date.now();
-                const newItem = { 
-                    id: newId, 
-                    type: editingItemType, 
-                    name: name 
+                const newItem = {
+                    id: Date.now(),
+                    type: editingItemType,
+                    name: name,
                 };
                 if (editingItemType === 'folder') {
                     newItem.items = [];
                 } else {
                     newItem.content = content;
                 }
-                currentList.push(newItem);
-                showNotification('Item baru berhasil ditambahkan!', '#2ecc71');
+
+                // MODIFIKASI: Logika penempatan untuk 'Versi Lain'
+                if (versioningSourceId !== null) {
+                    const sourceIndex = currentList.findIndex(item => item.id === versioningSourceId);
+                    if (sourceIndex > -1) {
+                        currentList.splice(sourceIndex + 1, 0, newItem); // Sisipkan setelah item asli
+                    } else {
+                        currentList.unshift(newItem); // Fallback jika item asli tidak ditemukan
+                    }
+                } else {
+                    currentList.unshift(newItem); // Perilaku default: tambahkan di atas
+                }
+                showNotification(`${editingItemType === 'folder' ? 'Folder' : 'Prompt'} baru ditambahkan!`, '#2ecc71');
             }
 
+            closeModal('itemModal');
             saveData();
             renderView();
-            closeModal('itemModal');
         }
 
         function deleteItem(id) {
-            const currentList = findListByPath();
-            const item = currentList.find(p => p.id === id);
-            
-            if (!item) return;
+            const location = getItemLocation(id);
+            if (location) {
+                const isFolder = location.item.type === 'folder';
+                const confirmMessage = isFolder 
+                    ? `Anda yakin ingin menghapus folder "${location.item.name}" beserta semua isinya (${location.item.items.length} item)? Aksi ini tidak dapat dibatalkan.`
+                    : `Anda yakin ingin menghapus prompt "${location.item.name}"?`;
 
-            if (item.type === 'folder' && item.items.length > 0) {
-                if (!confirm(`⚠️ Folder "${item.name}" berisi ${item.items.length} item. Menghapus folder akan **menghapus semua isinya**. Lanjutkan?`)) {
+                if (confirm(confirmMessage)) {
+                    location.list.splice(location.index, 1);
+                    saveData();
+                    renderView();
+                    showNotification(`${location.item.name} berhasil dihapus!`, '#e74c3c');
+                }
+            }
+        }
+        
+        function cancelCutOperation() {
+            isMultiSelectMode = false;
+            cutItemsData = [];
+            renderView();
+        }
+
+        function cutItem(id) {
+            if (isMultiSelectMode) return;
+            const location = getItemLocation(id);
+            if (location) {
+                isMultiSelectMode = true; 
+                cutItemsData = [{
+                    id: id,
+                    path: location.path,
+                    item: JSON.parse(JSON.stringify(location.item)),
+                    name: location.item.name
+                }];
+                showNotification(`Mode Pindah diaktifkan. Pilih item lain atau tempel.`, '#3498db');
+                renderView();
+            }
+        }
+
+        function toggleItemSelection(id, isChecked) {
+            const itemIndex = cutItemsData.findIndex(item => item.id === id);
+
+            if (isChecked && itemIndex === -1) {
+                const location = getItemLocation(id);
+                if (location) {
+                    cutItemsData.push({
+                        id: id,
+                        path: location.path,
+                        item: JSON.parse(JSON.stringify(location.item)),
+                        name: location.item.name
+                    });
+                }
+            } else if (!isChecked && itemIndex > -1) {
+                cutItemsData.splice(itemIndex, 1);
+            }
+
+            if (cutItemsData.length === 0) {
+                cancelCutOperation();
+            } else {
+                renderView();
+            }
+        }
+
+        function pasteItem() {
+            if (cutItemsData.length === 0) return;
+
+            const targetList = findListByPath();
+            let movedCount = 0;
+            const itemsToMove = [...cutItemsData].sort((a, b) => a.path.length - b.path.length);
+
+            for (const itemData of itemsToMove) {
+                const isDuplicate = targetList.some(i => i.name === itemData.name);
+                if (isDuplicate) {
+                    if (!confirm(`Item bernama "${itemData.name}" sudah ada di folder tujuan. Tetap tempel?`)) {
+                        showNotification('Operasi tempel dibatalkan.', '#e74c3c');
+                        return; 
+                    }
+                }
+                const isMovingIntoItself = itemData.item.type === 'folder' && isPathDescendant(itemData.path, currentPath);
+                if(isMovingIntoItself) {
+                    alert(`Tidak dapat memindahkan folder "${itemData.name}" ke dalam subfolder-nya sendiri.`);
                     return;
                 }
-            } else if (!confirm(`❓ Apakah Anda yakin ingin menghapus ${item.type === 'folder' ? 'Folder ini' : 'Prompt ini'}? Tindakan ini tidak dapat dibatalkan.`)) {
-                return;
             }
             
-            const indexToDelete = currentList.findIndex(p => p.id === id);
-            if (indexToDelete > -1) {
-                currentList.splice(indexToDelete, 1);
+            itemsToMove.forEach(itemData => {
+                 const sourceLocation = getItemLocation(itemData.id);
+                 if(sourceLocation) {
+                    sourceLocation.list.splice(sourceLocation.index, 1);
+                 }
+            });
+
+            itemsToMove.forEach(itemData => {
+                targetList.unshift(itemData.item);
+                movedCount++;
+            });
+
+            if (movedCount > 0) {
+                showNotification(`${movedCount} item berhasil dipindahkan.`, '#2ecc71');
             }
             
             saveData();
-            renderView();
-            showNotification('Item berhasil dihapus!', '#e74c3c');
+            cancelCutOperation();
         }
 
-        // --- DATA IMPORT/EXPORT FUNCTIONS (SOLUSI HP) ---
+        let draggedItem = null;
+        let originalParentList = null;
+
+        function addDragDropListeners() {
+            const listItems = listContainer.querySelectorAll('.folder-item, .prompt-item');
+            
+            listItems.forEach(item => {
+                item.addEventListener('dragstart', handleDragStart);
+                item.addEventListener('dragenter', handleDragEnter);
+                item.addEventListener('dragover', handleDragOver);
+                item.addEventListener('dragleave', handleDragLeave);
+                item.addEventListener('drop', handleDrop);
+                item.addEventListener('dragend', handleDragEnd);
+            });
+
+            listContainer.addEventListener('dragover', handleContainerDragOver);
+            listContainer.addEventListener('drop', handleContainerDrop);
+        }
+
+        function handleDragStart(e) {
+            draggedItem = this;
+            e.dataTransfer.effectAllowed = 'move';
+            e.dataTransfer.setData('text/plain', this.getAttribute('data-id'));
+            
+            const location = getItemLocation(parseInt(this.getAttribute('data-id')));
+            if (location) {
+                originalParentList = location.list;
+            } else {
+                originalParentList = null;
+            }
+
+            setTimeout(() => {
+                this.classList.add('dragging');
+            }, 0);
+        }
+
+        function handleDragEnd(e) {
+            this.classList.remove('dragging');
+            listContainer.querySelectorAll('.drag-over-top, .drag-over-bottom, .drag-over-folder').forEach(el => {
+                el.classList.remove('drag-over-top', 'drag-over-bottom', 'drag-over-folder');
+            });
+            draggedItem = null;
+            originalParentList = null;
+        }
+
+        function handleDragEnter(e) {
+            e.preventDefault();
+            const target = e.currentTarget;
+            if (draggedItem !== target) {
+                target.classList.add('drag-over');
+            }
+        }
+
+        function handleDragLeave(e) {
+            e.preventDefault();
+            e.currentTarget.classList.remove('drag-over');
+        }
+
+        function handleDragOver(e) {
+            e.preventDefault();
+            e.dataTransfer.dropEffect = 'move';
+            
+            const target = e.currentTarget;
+            if (draggedItem === target) return;
+
+            listContainer.querySelectorAll('.drag-over-top, .drag-over-bottom, .drag-over-folder').forEach(el => {
+                el.classList.remove('drag-over-top', 'drag-over-bottom', 'drag-over-folder');
+            });
+
+            const rect = target.getBoundingClientRect();
+            const y = e.clientY - rect.top;
+            const threshold = rect.height * 0.3;
+
+            if (target.getAttribute('data-type') === 'folder') {
+                if (y > threshold && y < rect.height - threshold) {
+                    target.classList.add('drag-over-folder');
+                } else if (y <= threshold) {
+                    target.classList.add('drag-over-top');
+                } else {
+                    target.classList.add('drag-over-bottom');
+                }
+            } else {
+                if (y <= rect.height / 2) {
+                    target.classList.add('drag-over-top');
+                } else {
+                    target.classList.add('drag-over-bottom');
+                }
+            }
+        }
         
+        function handleContainerDragOver(e) {
+            e.preventDefault();
+            e.dataTransfer.dropEffect = 'move';
+        }
+        
+function handleContainerDrop(e) {
+            e.preventDefault();
+            const target = e.target;
+            // Hanya proses jika drop terjadi langsung pada container, bukan pada item di dalamnya
+            if (!draggedItem || target !== listContainer) return;
+
+            const draggedId = parseInt(draggedItem.getAttribute('data-id'));
+            const draggedLocation = getItemLocation(draggedId);
+            
+            if (draggedLocation) {
+                // Hanya pindahkan jika item tidak sudah ada di paling bawah list tujuan
+                const targetList = findListByPath(currentPath);
+                if (draggedLocation.list !== targetList || draggedLocation.index < targetList.length - 1) {
+                    // 1. Hapus item dari list asal
+                    const [draggedObject] = draggedLocation.list.splice(draggedLocation.index, 1);
+                    // 2. Tambahkan ke akhir list tujuan saat ini
+                    targetList.push(draggedObject);
+                    
+                    saveData();
+                    renderView();
+                    showNotification(`${draggedObject.name} berhasil dipindahkan ke akhir.`, '#3498db');
+                }
+            }
+        }
+
+        function handleDrop(e) {
+            e.preventDefault();
+            const targetElement = e.currentTarget;
+
+            if (!draggedItem || draggedItem === targetElement) return;
+
+            const isDropIntoFolder = targetElement.classList.contains('drag-over-folder');
+            const isDropOnTop = targetElement.classList.contains('drag-over-top');
+            
+            // Hapus kelas visual segera
+            targetElement.classList.remove('drag-over-top', 'drag-over-bottom', 'drag-over-folder');
+
+            const draggedId = parseInt(draggedItem.getAttribute('data-id'));
+            const targetId = parseInt(targetElement.getAttribute('data-id'));
+            const draggedLocation = getItemLocation(draggedId);
+            const targetLocation = getItemLocation(targetId);
+
+            if (!draggedLocation || !targetLocation) return;
+            
+            const draggedItemObject = draggedLocation.item;
+            const targetItemObject = targetLocation.item;
+
+            // --- KASUS 1: PINDAH KE DALAM FOLDER ---
+            if (isDropIntoFolder && targetItemObject.type === 'folder') {
+                // Mencegah folder dipindah ke dalam dirinya sendiri
+                if (draggedItemObject.id === targetItemObject.id) return;
+                // Mencegah folder dipindah ke dalam subfolder-nya
+                if (draggedItemObject.type === 'folder' && isPathDescendant(draggedLocation.path, targetLocation.path)) {
+                    showNotification("Tidak dapat memindahkan folder ke dalam subfolder-nya sendiri.", '#e74c3c');
+                    return;
+                }
+
+                // Hapus dari list asal
+                const [movedItem] = draggedLocation.list.splice(draggedLocation.index, 1);
+                // Tambahkan ke list tujuan (folder)
+                targetItemObject.items.unshift(movedItem);
+
+                showNotification(`"${movedItem.name}" dipindahkan ke "${targetItemObject.name}"`, '#2ecc71');
+                saveData();
+                renderView();
+                return;
+            }
+
+            // --- KASUS 2: REORDER ITEM DI LIST YANG SAMA ---
+            if (draggedLocation.list === targetLocation.list) {
+                const sourceIndex = draggedLocation.index;
+                let targetIndex = targetLocation.index;
+
+                // Hapus item dari posisi lama untuk dihitung ulang
+                const [movedItem] = draggedLocation.list.splice(sourceIndex, 1);
+
+                // Sesuaikan targetIndex karena penghapusan item
+                if (sourceIndex < targetIndex) {
+                    targetIndex--;
+                }
+
+                // Tentukan posisi penyisipan baru
+                const finalIndex = isDropOnTop ? targetIndex : targetIndex + 1;
+                draggedLocation.list.splice(finalIndex, 0, movedItem);
+                
+                showNotification(`"${movedItem.name}" berhasil diatur ulang.`, '#3498db');
+                saveData();
+                renderView();
+            } else {
+                 showNotification("Hanya bisa reorder di dalam folder yang sama.", '#e74c3c');
+            }
+        }
+        
+        function isPathDescendant(ancestorPath, descendantPath) {
+            if (descendantPath.length <= ancestorPath.length) return false;
+            for (let i = 0; i < ancestorPath.length; i++) {
+                if (ancestorPath[i] !== descendantPath[i]) {
+                    return false;
+                }
+            }
+            return true;
+        }
+
         function exportData() {
-            const dataToExport = JSON.stringify(rootData, null, 2);
-            
-            // Menggunakan Data URI (lebih kompatibel di browser HP daripada Blob URL)
-            const dataUri = 'data:application/json;charset=utf-8,' + encodeURIComponent(dataToExport);
-            
-            const a = document.createElement('a');
-            
-            // Beri nama file yang informatif
-            const date = new Date().toISOString().slice(0, 10);
-            a.download = `prompt-manager-backup-${date}.json`;
-            a.href = dataUri; 
-            
-            // Tambahkan dan klik secara otomatis
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            
-            showNotification('Data berhasil diekspor!', '#2ecc71');
+            const dataStr = JSON.stringify(rootData, null, 2);
+            const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+
+            const exportFileDefaultName = 'prompt_manager_data.json';
+
+            const linkElement = document.createElement('a');
+            linkElement.setAttribute('href', dataUri);
+            linkElement.setAttribute('download', exportFileDefaultName);
+            linkElement.click();
+            showNotification('Data berhasil diekspor!', '#3498db');
         }
 
         function importData(event) {
@@ -855,119 +1353,35 @@
             if (!file) return;
 
             const reader = new FileReader();
-            reader.onload = function(e) {
+            reader.onload = (e) => {
                 try {
                     const importedData = JSON.parse(e.target.result);
-                    if (!Array.isArray(importedData)) {
-                        throw new Error("Format JSON tidak valid (bukan array).");
-                    }
-                    if (confirm("⚠️ Yakin ingin menimpa data saat ini dengan data dari file ini?")) {
-                        rootData = importedData;
-                        saveData();
-                        currentPath = [];
-                        renderView();
-                        closeModal('settingsModal');
-                        showNotification('Data berhasil diimpor dan dimuat ulang!', '#f39c12');
+                    if (Array.isArray(importedData)) {
+                        if (confirm("Anda yakin ingin menimpa data saat ini dengan data impor?")) {
+                            rootData = importedData;
+                            saveData();
+                            renderView();
+                            showNotification('Data berhasil diimpor dan dimuat!', '#2ecc71');
+                        }
+                    } else {
+                        alert("Format file tidak valid. Harap impor file JSON yang berisi array.");
                     }
                 } catch (error) {
-                    alert(`❗ Gagal mengimpor data. Pastikan file JSON valid.\nDetail: ${error.message}`);
-                    console.error("Import Error:", error);
+                    alert("Gagal memproses file. Pastikan itu adalah file JSON yang valid.");
+                    console.error("Import error:", error);
                 }
             };
             reader.readAsText(file);
         }
 
-        // --- DRAG & DROP LOGIC ---
-
-        let draggedItem = null;
-
-        function handleDragStart(e) {
-            // Folder di root atau Prompt/Folder di dalam folder bisa di-drag
-            draggedItem = e.target.closest('.folder-item, .prompt-item');
-            if (!draggedItem) return;
-            
-            e.dataTransfer.effectAllowed = 'move';
-            e.dataTransfer.setData('text/plain', draggedItem.getAttribute('data-id'));
-
-            setTimeout(() => {
-                draggedItem.classList.add('dragging');
-            }, 0);
-        }
-
-        function handleDragOver(e) {
-            e.preventDefault();
-            const target = e.target.closest('.folder-item, .prompt-item');
-            if (target && target !== draggedItem) {
-                // Tambahkan visual indikator drop di sini jika perlu
-                e.dataTransfer.dropEffect = 'move';
+        window.addEventListener('popstate', (event) => {
+            if (event.state && event.state.path) {
+                currentPath = event.state.path;
+            } else {
+                currentPath = [];
             }
-        }
-
-        function handleDrop(e) {
-            e.preventDefault();
-            const target = e.target.closest('.folder-item, .prompt-item');
-            
-            if (draggedItem && target && target !== draggedItem) {
-                const currentList = findListByPath();
-
-                const draggedId = parseInt(draggedItem.getAttribute('data-id'));
-                const targetId = parseInt(target.getAttribute('data-id'));
-                
-                const draggedIndex = currentList.findIndex(item => item.id === draggedId);
-                const targetIndex = currentList.findIndex(item => item.id === targetId);
-
-                if (draggedIndex === -1 || targetIndex === -1) return;
-
-                // 1. Pindahkan item
-                const item = currentList.splice(draggedIndex, 1)[0];
-                
-                // 2. Tentukan posisi drop
-                const rect = target.getBoundingClientRect();
-                const dropAfter = (e.clientY - rect.top) > (rect.height / 2);
-
-                let finalPosition = targetIndex;
-                if (dropAfter) {
-                    finalPosition = targetIndex + 1;
-                }
-                
-                // Koreksi posisi jika item digeser ke bawah
-                if (draggedIndex < targetIndex && !dropAfter) {
-                    finalPosition--;
-                } else if (draggedIndex < targetIndex && dropAfter) {
-                    // Jika drag dari atas ke bawah, posisi splice akan bergeser 1
-                    finalPosition--; 
-                }
-
-                currentList.splice(finalPosition, 0, item);
-
-                showNotification('Urutan item berhasil diubah!', '#3498db');
-                saveData();
-                renderView();
-            }
-        }
-
-        function handleDragEnd(e) {
-            if (draggedItem) {
-                draggedItem.classList.remove('dragging');
-                draggedItem = null;
-            }
-        }
-
-        // Tambahkan Listener Drag & Drop
-        function addDragDropListeners() {
-            listContainer.querySelectorAll('.folder-item, .prompt-item').forEach(item => {
-                // Pastikan listener hanya ditambahkan sekali
-                item.addEventListener('dragstart', handleDragStart);
-                item.addEventListener('dragover', handleDragOver);
-                item.addEventListener('drop', handleDrop);
-                item.addEventListener('dragend', handleDragEnd);
-            });
-
-            // Mencegah drop di luar item list
-            listContainer.addEventListener('dragover', (e) => e.preventDefault());
-        }
-
+            renderView();
+        });
     </script>
 </body>
-
 </html>
